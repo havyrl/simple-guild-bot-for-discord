@@ -1,0 +1,9 @@
+{
+  "name": "simple-guild-bot",
+  "version": "0.0.0",
+  "description": "SimpleGuildBot",
+  "main": "bot.js",
+  "author": {
+    "name": "Havyrl Valdroia"
+  }
+}
