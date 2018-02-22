@@ -1,7 +1,9 @@
 'use strict';
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
+const Discord = require("discord.js");
+const logger = require('winston');
+const auth = require('./auth.json');
+const flag_send_text = 2048;
+const flag_speak = 2097152;
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -11,32 +13,58 @@ logger.add(logger.transports.Console, {
 logger.level = 'debug';
 
 // Initialize Discord Bot
-var bot = new Discord.Client({
-    token: auth.token,
-    autorun: true
-});
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
-});
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
+const bot = new Discord.Client();
+const defaultTextChannels = new Map();
+const defaultVoiceChannels = new Map();
 
-        args = args.splice(1);
-        switch (cmd) {
-            // !ping
-            case 'ping':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
+bot.on('ready', () => {
+    console.log(`Logged in as ${bot.user.tag}!`);
+    
+    bot.channels.forEach((channel, key) => {
+        let hasPermission = false;
+        switch (channel.type) {
+            case "text":
+                channel.permissionOverwrites.forEach((permission, key) => {
+                    if (!hasPermission && permission.type === "member" && permission.id === bot.user.id && permission.deny === 0 && permission.allow & flag_send_text) {
+                        hasPermission = true;
+                    }
                 });
-                break;
-            // Just add any case commands if you want to..
+                if (hasPermission) {
+                    defaultTextChannels.set(channel.guild.id, channel);
+                }
+            case "voice":
+                channel.permissionOverwrites.forEach((permission, key) => {
+                    if (!hasPermission && permission.type === "member" && permission.id === bot.user.id && permission.deny === 0 && permission.allow & flag_speak) {
+                        hasPermission = true;
+                    }
+                });
+                if (hasPermission) {
+                    defaultVoiceChannels.set(channel.guild.id, channel);
+                }
         }
+    });
+});
+
+bot.on('voiceStateUpdate', (oldStatus, newStatus) => {
+    const guildId = oldStatus.guild.id || newStatus.guild.id;
+    const defaultTextChannel = defaultTextChannels.get(guildId);
+    if (defaultTextChannel == null) {
+        return;
+    }
+    const username = oldStatus.user.username || newStatus.user.username;
+    const oldChannelId = oldStatus.voiceChannelID;
+    const oldChannel = bot.channels.get(oldChannelId);
+    const newChannelId = newStatus.voiceChannelID;
+    const newChannel = bot.channels.get(newChannelId);
+
+    if (oldChannelId == null || oldChannelId == undefined) {
+        defaultTextChannel.sendMessage(username + " has joind " + newChannel.name);
+    } else if (newChannelId == null || newChannelId == undefined) {
+        defaultTextChannel.sendMessage(username + " has left " + oldChannel.name);
+    } else {
+        defaultTextChannel.sendMessage(username + " has moved from " + oldChannel.name + " to " + newChannel.name);
     }
 });
+
+bot.login(auth.token);
+
