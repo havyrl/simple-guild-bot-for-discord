@@ -29,7 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="bot.js" />
-    <Content Include="Json.json">
+    <Content Include="auth.json">
       <SubType>Code</SubType>
     </Content>
     <Content Include="package.json" />
