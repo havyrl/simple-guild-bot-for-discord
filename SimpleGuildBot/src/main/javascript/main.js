@@ -1,7 +1,7 @@
 'use strict';
 const Discord = require("discord.js");
 const logger = require('winston');
-const auth = require('./auth.json');
+const auth = require('../resources/auth.json');
 const flag_send_text = 2048;
 const flag_speak = 2097152;
 
