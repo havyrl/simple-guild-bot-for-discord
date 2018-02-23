@@ -19,6 +19,12 @@ const defaultVoiceChannels = new Map();
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`);
+
+    bot.guilds.forEach((guild, key) => {
+        guild.members.get(bot.user.id).setNickname(guild.name).catch((e) => {
+            console.log("can't rename at ", guild.name);
+        });
+    });
     
     bot.channels.forEach((channel, key) => {
         let hasPermission = false;
