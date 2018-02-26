@@ -1,4 +1,4 @@
-package org.pryos.SimpleGuildBotForDiscord.Application;
+package org.pryos.SimpleGuildBotForDiscord.Module;
 
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;

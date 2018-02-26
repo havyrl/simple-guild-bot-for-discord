@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.DiscordGuildConfiguration;
 import org.pryos.SimpleGuildBotForDiscord.Module.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
@@ -33,7 +34,7 @@ public class ApplicationController {
 	private final Map<Class<? extends AbstractBotModule>, AbstractBotModule> mapModules = new HashMap<>();
 
 	public ApplicationController() throws URISyntaxException {
-		oPath = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+		oPath = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
 		loadConfig();
 
 		String sToken = (String) oConfig.get("auth.token");

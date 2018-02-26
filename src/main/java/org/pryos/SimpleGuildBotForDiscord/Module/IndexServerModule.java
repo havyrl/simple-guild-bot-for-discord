@@ -4,7 +4,6 @@ import java.util.EnumSet;
 
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
-import org.pryos.SimpleGuildBotForDiscord.Application.DiscordGuildConfiguration;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
