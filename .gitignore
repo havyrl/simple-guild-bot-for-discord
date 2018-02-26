@@ -1,4 +1,10 @@
-target
+# eclipse
 /.settings
 /.classpath
 /.project
+
+# build
+target
+
+# private files
+config.properties
