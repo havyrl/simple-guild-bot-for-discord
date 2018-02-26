@@ -1,10 +1,9 @@
 package org.pryos.SimpleGuildBotForDiscord;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
-import org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce.VoiceStatusAnounceController;
+import org.pryos.SimpleGuildBotForDiscord.Module.DiscordEventLogModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce.VoiceStatusAnounceModule;
 
 /**
  * Hello world!
@@ -17,12 +16,10 @@ public class App {
 	public static void main(String[] args) {
 
 		ApplicationController oApp = new ApplicationController();
-		try {
-			oApp.loadModule(VoiceStatusAnounceController.class);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			LOGGER.error(e.getMessage(), e);
+		if (LOGGER.isDebugEnabled()) {
+			oApp.loadModule(DiscordEventLogModule.class);
 		}
+		oApp.loadModule(VoiceStatusAnounceModule.class);
 		oApp.login();
 
 	}

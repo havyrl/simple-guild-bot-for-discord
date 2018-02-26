@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -21,6 +22,7 @@ public class ApplicationController {
 	private final Logger oLogger = Logger.getLogger(getClass());
 	private final Properties oConfig = new Properties();
 	private final IDiscordClient oDiscordApi;
+	public final IndexServerModule oIndexServerModule;
 
 	public ApplicationController() {
 
@@ -34,14 +36,21 @@ public class ApplicationController {
 		oDiscordApiBuilder.withToken(sToken);
 		oDiscordApi = oDiscordApiBuilder.build();
 
+		// index servers
+		oIndexServerModule = loadModule(IndexServerModule.class);
+
 	}
 
-	public AbstractBotModule loadModule(Class<? extends AbstractBotModule> oModuleClass)
-			throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		Constructor<? extends AbstractBotModule> oModuleConstrcutor = oModuleClass
-				.getDeclaredConstructor(IDiscordClient.class);
-		return oModuleConstrcutor.newInstance(oDiscordApi);
+	public <M extends AbstractBotModule> M loadModule(Class<M> oModuleClass) {
+		Constructor<M> oModuleConstrcutor;
+		try {
+			oModuleConstrcutor = oModuleClass.getDeclaredConstructor(IDiscordClient.class);
+			return oModuleConstrcutor.newInstance(oDiscordApi);
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			oLogger.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	private void loadConfig() {
