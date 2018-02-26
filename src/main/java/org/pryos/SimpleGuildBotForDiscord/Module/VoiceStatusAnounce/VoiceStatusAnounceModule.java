@@ -1,53 +1,68 @@
 package org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce;
 
-import org.apache.log4j.Logger;
+import java.util.EnumSet;
+
+import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.events.guild.GuildEvent;
-import sx.blah.discord.handle.impl.events.module.ModuleEvent;
-import sx.blah.discord.handle.impl.events.shard.ShardEvent;
-import sx.blah.discord.handle.impl.events.user.UserEvent;
-import sx.blah.discord.util.audio.events.AudioPlayerEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
+import sx.blah.discord.handle.obj.Permissions;
 
 public class VoiceStatusAnounceModule extends AbstractBotModule {
 
-	private final Logger oLogger = Logger.getLogger(getClass());
+	// private static final String JOIN_MESSAGE = "%s has joind %s.";
+	// private static final String MOVE_MESSAGE = "%s has moved from %s to %s.";
+	// private static final String LEAVE_MESSAGE = "%s has left %s.";
 
-	public VoiceStatusAnounceModule(IDiscordClient oDiscordApi) {
-		super(oDiscordApi);
+	private static final String JOIN_MESSAGE = "%s ist dem Kanal %s beigetreten.";
+	private static final String MOVE_MESSAGE = "%s ist von Kanal %s zu Kanal %s gewechselt.";
+	private static final String LEAVE_MESSAGE = "%s hat den Kanal %s verlassen.";
+
+	public VoiceStatusAnounceModule(ApplicationController oApp, IDiscordClient oDiscordApi) {
+		super(oApp, oDiscordApi);
 	}
 
 	@EventSubscriber
-	public void handle(ReadyEvent event) {
+	public void handle(UserVoiceChannelJoinEvent oEvent) {
+		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
+		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
+			oApp.sendMessage(oEvent.getGuild(),
+					String.format(JOIN_MESSAGE, oEvent.getUser().getName(), oEvent.getVoiceChannel().getName()));
+		}
+	}
+
+	@EventSubscriber
+	public void handle(UserVoiceChannelMoveEvent oEvent) {
+		EnumSet<Permissions> setOldPermissions = oEvent.getOldChannel()
+				.getModifiedPermissions(oDiscordApi.getOurUser());
+		EnumSet<Permissions> setNewPermissions = oEvent.getNewChannel()
+				.getModifiedPermissions(oDiscordApi.getOurUser());
+		if (setOldPermissions.contains(Permissions.VOICE_CONNECT)
+				&& setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
+			oApp.sendMessage(oEvent.getGuild(), String.format(MOVE_MESSAGE, oEvent.getUser().getName(),
+					oEvent.getOldChannel().getName(), oEvent.getNewChannel().getName()));
+		} else if (!setOldPermissions.contains(Permissions.VOICE_CONNECT)
+				&& setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
+			oApp.sendMessage(oEvent.getGuild(),
+					String.format(JOIN_MESSAGE, oEvent.getUser().getName(), oEvent.getNewChannel().getName()));
+		} else if (setOldPermissions.contains(Permissions.VOICE_CONNECT)
+				&& !setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
+			oApp.sendMessage(oEvent.getGuild(),
+					String.format(LEAVE_MESSAGE, oEvent.getUser().getName(), oEvent.getOldChannel().getName()));
+		}
 
 	}
 
 	@EventSubscriber
-	public void handle(GuildEvent event) {
-
+	public void handle(UserVoiceChannelLeaveEvent oEvent) {
+		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
+		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
+			oApp.sendMessage(oEvent.getGuild(),
+					String.format(LEAVE_MESSAGE, oEvent.getUser().getName(), oEvent.getVoiceChannel().getName()));
+		}
 	}
-
-	@EventSubscriber
-	public void handle(ModuleEvent event) {
-
-	}
-
-	@EventSubscriber
-	public void handle(ShardEvent event) {
-
-	}
-
-	@EventSubscriber
-	public void handle(UserEvent event) {
-
-	}
-
-	@EventSubscriber
-	public void handle(AudioPlayerEvent event) {
-
-	}
-
 }

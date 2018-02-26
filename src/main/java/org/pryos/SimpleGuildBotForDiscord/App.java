@@ -1,7 +1,10 @@
 package org.pryos.SimpleGuildBotForDiscord;
 
+import java.net.URISyntaxException;
+
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
+import org.pryos.SimpleGuildBotForDiscord.Module.BotRenameModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.DiscordEventLogModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce.VoiceStatusAnounceModule;
 
@@ -15,13 +18,20 @@ public class App {
 
 	public static void main(String[] args) {
 
-		ApplicationController oApp = new ApplicationController();
-		if (LOGGER.isDebugEnabled()) {
-			oApp.loadModule(DiscordEventLogModule.class);
+		ApplicationController oApp = null;
+		try {
+			oApp = new ApplicationController();
+		} catch (URISyntaxException e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		oApp.loadModule(VoiceStatusAnounceModule.class);
-		oApp.login();
-
+		if (oApp != null) {
+			if (LOGGER.isDebugEnabled()) {
+				oApp.loadModule(DiscordEventLogModule.class);
+			}
+			oApp.loadModule(BotRenameModule.class);
+			oApp.loadModule(VoiceStatusAnounceModule.class);
+			oApp.login();
+		}
 	}
 
 }

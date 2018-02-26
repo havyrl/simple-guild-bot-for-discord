@@ -1,6 +1,7 @@
 package org.pryos.SimpleGuildBotForDiscord.Module;
 
 import org.apache.log4j.Logger;
+import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -15,8 +16,8 @@ public class DiscordEventLogModule extends AbstractBotModule {
 
 	private final Logger oLogger = Logger.getLogger(getClass());
 
-	public DiscordEventLogModule(IDiscordClient oDiscordApi) {
-		super(oDiscordApi);
+	public DiscordEventLogModule(ApplicationController oApp, IDiscordClient oDiscordApi) {
+		super(oApp, oDiscordApi);
 	}
 
 	@EventSubscriber
