@@ -8,3 +8,4 @@ target
 
 # private files
 config.properties
+config-local.properties

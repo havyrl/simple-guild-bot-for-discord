@@ -1,9 +1,12 @@
 package org.pryos.SimpleGuildBotForDiscord.Application;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -20,6 +23,7 @@ import sx.blah.discord.handle.obj.IGuild;
 public class ApplicationController {
 
 	private final String CONFIG_FILE = "/config.properties";
+	private final String CONFIG_FILE_TEST = "config-local.properties";
 	private final Logger oLogger = Logger.getLogger(getClass());
 	private final Properties oConfig = new Properties();
 	private final IDiscordClient oDiscordApi;
@@ -61,9 +65,18 @@ public class ApplicationController {
 	}
 
 	private void loadConfig() {
+		URL oLocation = getClass().getProtectionDomain().getCodeSource().getLocation();
 		try {
-			oConfig.load(getClass().getResourceAsStream(CONFIG_FILE));
-		} catch (IOException e) {
+			// config in jar
+			if (oLocation.getFile().contains(".jar")) {
+				oLogger.info(String.format("read resource %s", CONFIG_FILE));
+				oConfig.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE));
+			} else { // test config in target dir
+				File oFile = Paths.get(oLocation.toURI()).resolve(CONFIG_FILE_TEST).toFile();
+				oLogger.info(String.format("read file %s", oFile.getAbsolutePath()));
+				oConfig.load(new FileInputStream(oFile));
+			}
+		} catch (Exception e) {
 			oLogger.error(e.getMessage(), e);
 		}
 	}
