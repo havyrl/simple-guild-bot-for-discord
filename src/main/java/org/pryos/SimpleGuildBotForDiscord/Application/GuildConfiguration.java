@@ -1,16 +1,16 @@
-package org.pryos.SimpleGuildBotForDiscord.Module;
+package org.pryos.SimpleGuildBotForDiscord.Application;
 
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
-public class DiscordGuildConfiguration {
+public class GuildConfiguration {
 
 	private IGuild guild;
 	private IChannel defaultTextChannel;
 	private IVoiceChannel defaultVoiceChannel;
 
-	public DiscordGuildConfiguration(IGuild oGuild) {
+	public GuildConfiguration(IGuild oGuild) {
 		setGuild(oGuild);
 	}
 
@@ -30,7 +30,7 @@ public class DiscordGuildConfiguration {
 		return defaultTextChannel;
 	}
 
-	public DiscordGuildConfiguration setDefaultTextChannel(IChannel defaultTextChannel) {
+	public GuildConfiguration setDefaultTextChannel(IChannel defaultTextChannel) {
 		this.defaultTextChannel = defaultTextChannel;
 		return this;
 	}
@@ -39,7 +39,7 @@ public class DiscordGuildConfiguration {
 		return defaultVoiceChannel;
 	}
 
-	public DiscordGuildConfiguration setDefaultVoiceChannel(IVoiceChannel defaultVoiceChannel) {
+	public GuildConfiguration setDefaultVoiceChannel(IVoiceChannel defaultVoiceChannel) {
 		this.defaultVoiceChannel = defaultVoiceChannel;
 		return this;
 	}

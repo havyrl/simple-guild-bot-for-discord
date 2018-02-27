@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
+import org.pryos.SimpleGuildBotForDiscord.Application.GuildConfiguration;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -59,7 +60,7 @@ public class IndexServerModule extends AbstractBotModule {
 	}
 
 	private void reindexChannels(IGuild oGuild) {
-		DiscordGuildConfiguration oGuildConfig = oApp.getGuildSettings(oGuild);
+		GuildConfiguration oGuildConfig = oApp.getGuildSettings(oGuild);
 
 		oGuildConfig.setDefaultTextChannel(null);
 		oGuildConfig.setDefaultVoiceChannel(null);

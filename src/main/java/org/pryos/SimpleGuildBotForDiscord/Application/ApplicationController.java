@@ -11,7 +11,6 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
-import org.pryos.SimpleGuildBotForDiscord.Module.DiscordGuildConfiguration;
 import org.pryos.SimpleGuildBotForDiscord.Module.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
@@ -24,7 +23,7 @@ public class ApplicationController {
 	private final Logger oLogger = Logger.getLogger(getClass());
 	private final Properties oConfig = new Properties();
 	private final IDiscordClient oDiscordApi;
-	private final Map<IGuild, DiscordGuildConfiguration> mapGuildConfig = new HashMap<>();
+	private final Map<IGuild, GuildConfiguration> mapGuildConfig = new HashMap<>();
 	private final Map<Class<? extends AbstractBotModule>, AbstractBotModule> mapModules = new HashMap<>();
 
 	public ApplicationController() throws URISyntaxException {
@@ -75,17 +74,17 @@ public class ApplicationController {
 		}
 	}
 
-	public DiscordGuildConfiguration getGuildSettings(IGuild oGuild) {
-		DiscordGuildConfiguration oServer = mapGuildConfig.get(oGuild);
+	public GuildConfiguration getGuildSettings(IGuild oGuild) {
+		GuildConfiguration oServer = mapGuildConfig.get(oGuild);
 		if (oServer == null) {
-			oServer = new DiscordGuildConfiguration(oGuild);
+			oServer = new GuildConfiguration(oGuild);
 			mapGuildConfig.put(oGuild, oServer);
 		}
 		return oServer;
 	}
 
 	public void sendMessage(IGuild oGuild, String sMessage) {
-		DiscordGuildConfiguration oServer = getGuildSettings(oGuild);
+		GuildConfiguration oServer = getGuildSettings(oGuild);
 		if (oServer.getDefaultTextChannel() != null) {
 			oServer.getDefaultTextChannel().sendMessage(sMessage);
 		} else {
