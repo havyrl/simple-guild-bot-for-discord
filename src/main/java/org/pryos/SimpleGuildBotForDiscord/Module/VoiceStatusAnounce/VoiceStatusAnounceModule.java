@@ -2,6 +2,7 @@ package org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce;
 
 import java.util.EnumSet;
 
+import org.eclipse.jetty.util.StringUtil;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
 
@@ -59,6 +60,9 @@ public class VoiceStatusAnounceModule extends AbstractBotModule {
 	@EventSubscriber
 	public void handle(UserVoiceChannelLeaveEvent oEvent) {
 		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
+		if (StringUtil.isBlank(sNick)) {
+			sNick = oEvent.getUser().getName();
+		}
 		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
 		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
 			oApp.sendMessage(oEvent.getGuild(),
