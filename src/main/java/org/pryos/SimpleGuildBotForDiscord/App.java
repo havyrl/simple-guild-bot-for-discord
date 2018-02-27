@@ -25,7 +25,7 @@ public class App {
 			LOGGER.error(e.getMessage(), e);
 		}
 		if (oApp != null) {
-			if (LOGGER.isDebugEnabled()) {
+			if (ApplicationController.isLocal() && LOGGER.isDebugEnabled()) {
 				oApp.loadModule(DiscordEventLogModule.class);
 			}
 			oApp.loadModule(BotRenameModule.class);

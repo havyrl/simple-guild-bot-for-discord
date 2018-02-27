@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BotCommandlModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
@@ -22,8 +22,11 @@ import sx.blah.discord.handle.obj.IGuild;
 
 public class ApplicationController {
 
+	private static final boolean IS_LOCAL = ApplicationController.class.getProtectionDomain().getCodeSource()
+			.getLocation().getFile().contains(".jar");
 	private final String CONFIG_FILE = "/config.properties";
 	private final String CONFIG_FILE_TEST = "config-local.properties";
+
 	private final Logger oLogger = Logger.getLogger(getClass());
 	private final Properties oConfig = new Properties();
 	private final IDiscordClient oDiscordApi;
@@ -42,6 +45,7 @@ public class ApplicationController {
 
 		// index servers
 		loadModule(IndexServerModule.class);
+		loadModule(BotCommandlModule.class);
 	}
 
 	public <M extends AbstractBotModule> M loadModule(Class<M> oModuleClass) {
@@ -65,14 +69,14 @@ public class ApplicationController {
 	}
 
 	private void loadConfig() {
-		URL oLocation = getClass().getProtectionDomain().getCodeSource().getLocation();
 		try {
 			// config in jar
-			if (oLocation.getFile().contains(".jar")) {
+			if (isLocal()) {
 				oLogger.info(String.format("read resource %s", CONFIG_FILE));
 				oConfig.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE));
 			} else { // test config in target dir
-				File oFile = Paths.get(oLocation.toURI()).resolve(CONFIG_FILE_TEST).toFile();
+				File oFile = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI())
+						.resolve(CONFIG_FILE_TEST).toFile();
 				oLogger.info(String.format("read file %s", oFile.getAbsolutePath()));
 				oConfig.load(new FileInputStream(oFile));
 			}
@@ -103,6 +107,10 @@ public class ApplicationController {
 		} else {
 			oLogger.warn("missing default text channel for server: " + oGuild.getName() + "|" + oGuild.getLongID());
 		}
+	}
+
+	public static boolean isLocal() {
+		return IS_LOCAL;
 	}
 
 }
