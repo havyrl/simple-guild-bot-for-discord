@@ -28,41 +28,41 @@ public class VoiceStatusAnounceModule extends AbstractBotModule {
 
 	@EventSubscriber
 	public void handle(UserVoiceChannelJoinEvent oEvent) {
+		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
 		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
 		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
-			oApp.sendMessage(oEvent.getGuild(),
-					String.format(JOIN_MESSAGE, oEvent.getUser().getName(), oEvent.getVoiceChannel().getName()));
+			oApp.sendMessage(oEvent.getGuild(), String.format(JOIN_MESSAGE, sNick, oEvent.getVoiceChannel().getName()));
 		}
 	}
 
 	@EventSubscriber
 	public void handle(UserVoiceChannelMoveEvent oEvent) {
+		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
 		EnumSet<Permissions> setOldPermissions = oEvent.getOldChannel()
 				.getModifiedPermissions(oDiscordApi.getOurUser());
 		EnumSet<Permissions> setNewPermissions = oEvent.getNewChannel()
 				.getModifiedPermissions(oDiscordApi.getOurUser());
 		if (setOldPermissions.contains(Permissions.VOICE_CONNECT)
 				&& setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
-			oApp.sendMessage(oEvent.getGuild(), String.format(MOVE_MESSAGE, oEvent.getUser().getName(),
-					oEvent.getOldChannel().getName(), oEvent.getNewChannel().getName()));
+			oApp.sendMessage(oEvent.getGuild(), String.format(MOVE_MESSAGE, sNick, oEvent.getOldChannel().getName(),
+					oEvent.getNewChannel().getName()));
 		} else if (!setOldPermissions.contains(Permissions.VOICE_CONNECT)
 				&& setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
-			oApp.sendMessage(oEvent.getGuild(),
-					String.format(JOIN_MESSAGE, oEvent.getUser().getName(), oEvent.getNewChannel().getName()));
+			oApp.sendMessage(oEvent.getGuild(), String.format(JOIN_MESSAGE, sNick, oEvent.getNewChannel().getName()));
 		} else if (setOldPermissions.contains(Permissions.VOICE_CONNECT)
 				&& !setNewPermissions.contains(Permissions.VOICE_CONNECT)) {
-			oApp.sendMessage(oEvent.getGuild(),
-					String.format(LEAVE_MESSAGE, oEvent.getUser().getName(), oEvent.getOldChannel().getName()));
+			oApp.sendMessage(oEvent.getGuild(), String.format(LEAVE_MESSAGE, sNick, oEvent.getOldChannel().getName()));
 		}
 
 	}
 
 	@EventSubscriber
 	public void handle(UserVoiceChannelLeaveEvent oEvent) {
+		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
 		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
 		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
 			oApp.sendMessage(oEvent.getGuild(),
-					String.format(LEAVE_MESSAGE, oEvent.getUser().getName(), oEvent.getVoiceChannel().getName()));
+					String.format(LEAVE_MESSAGE, sNick, oEvent.getVoiceChannel().getName()));
 		}
 	}
 }
