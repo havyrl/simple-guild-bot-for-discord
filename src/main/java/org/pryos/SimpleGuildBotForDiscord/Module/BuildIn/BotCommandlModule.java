@@ -22,9 +22,7 @@ public class BotCommandlModule extends AbstractBotModule {
 	}
 
 	@EventSubscriber
-	public void onMessageReceived(MessageReceivedEvent event) {
-
-		oLogger.debug("MessageReceivedEvent: " + event.getMessage().getContent());
+	public void onMessageReceived(MessageReceivedEvent oEvent) {
 
 		// Note for error handling, you'll probably want to log failed commands with a
 		// logger or sout
@@ -37,7 +35,7 @@ public class BotCommandlModule extends AbstractBotModule {
 
 		// Given a message "/test arg1 arg2", argArray will contain ["/test", "arg1",
 		// "arg"]
-		String[] argArray = event.getMessage().getContent().split(" ");
+		String[] argArray = oEvent.getMessage().getContent().split(" ");
 
 		// First ensure at least the command and prefix is present, the arg length can
 		// be handled by your command func
@@ -51,27 +49,19 @@ public class BotCommandlModule extends AbstractBotModule {
 
 		// Extract the "command" part of the first arg out by just ditching the first
 		// character
-		String commandStr = argArray[0].substring(1);
+		String sCommand = argArray[0].substring(1);
 
 		// Load the rest of the args in the array into a List for safer access
-		List<String> argsList = new ArrayList<>(Arrays.asList(argArray));
-		argsList.remove(0); // Remove the command
+		List<String> lstArguments = new ArrayList<>(Arrays.asList(argArray));
+		lstArguments.remove(0); // Remove the command
 
 		// Begin the switch to handle the string to command mappings. It's likely wise
 		// to pass the whole event or
 		// some part (IChannel) to the command handling it
-		switch (commandStr) {
-
-		case "test":
-			testCommand(event, argsList);
-			break;
-
+		if (oLogger.isTraceEnabled()) {
+			oLogger.trace(String.format("doCommand: %s", sCommand));
 		}
-	}
-
-	private void testCommand(MessageReceivedEvent event, List<String> args) {
-
-		event.getChannel().sendMessage(String.format("You ran the test command with args: " + args));
+		oApp.doCommand(sCommand, lstArguments, oEvent);
 
 	}
 

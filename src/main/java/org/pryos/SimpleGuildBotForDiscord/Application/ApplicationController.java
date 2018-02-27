@@ -6,7 +6,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -18,6 +20,7 @@ import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IGuild;
 
 public class ApplicationController {
@@ -32,6 +35,7 @@ public class ApplicationController {
 	private final IDiscordClient oDiscordApi;
 	private final Map<IGuild, GuildConfiguration> mapGuildConfig = new HashMap<>();
 	private final Map<Class<? extends AbstractBotModule>, AbstractBotModule> mapModules = new HashMap<>();
+	private final Map<String, List<? extends ICommandHandler>> mapHandler = new HashMap<>();
 
 	public ApplicationController() throws URISyntaxException {
 		// load config
@@ -46,6 +50,32 @@ public class ApplicationController {
 		// index servers
 		loadModule(IndexServerModule.class);
 		loadModule(BotCommandlModule.class);
+	}
+
+	public void doCommand(String sCommand, List<String> lstArguments, MessageReceivedEvent oEvent) {
+		List<ICommandHandler> lstHandlers = getHandlers(sCommand, true);
+		for (ICommandHandler oHandler : lstHandlers) {
+			oHandler.handle(sCommand, lstArguments, oEvent);
+		}
+	}
+
+	public <L extends ICommandHandler> void registerCommand(String sCommand, L oHandler) {
+		List<ICommandHandler> lstHandlers = getHandlers(sCommand, true);
+		if (!lstHandlers.contains(oHandler)) {
+			lstHandlers.add(oHandler);
+		}
+	}
+
+	private <L extends ICommandHandler> List<L> getHandlers(String sCommand, boolean bAdd) {
+		@SuppressWarnings("unchecked")
+		List<L> lstHandlers = (List<L>) mapHandler.get(sCommand);
+		if (lstHandlers == null) {
+			lstHandlers = new ArrayList<>();
+			if (bAdd) {
+				mapHandler.put(sCommand, lstHandlers);
+			}
+		}
+		return lstHandlers;
 	}
 
 	public <M extends AbstractBotModule> M loadModule(Class<M> oModuleClass) {
