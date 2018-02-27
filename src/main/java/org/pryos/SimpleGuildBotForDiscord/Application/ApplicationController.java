@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.BotCommandlModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.BotControlModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
@@ -51,6 +52,7 @@ public class ApplicationController {
 		// index servers
 		loadModule(IndexServerModule.class);
 		loadModule(BotCommandlModule.class);
+		loadModule(BotControlModule.class);
 	}
 
 	public void doCommand(String sCommand, List<String> lstArguments, MessageReceivedEvent oEvent) {
