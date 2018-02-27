@@ -1,14 +1,9 @@
 package org.pryos.SimpleGuildBotForDiscord.Application;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -25,8 +20,7 @@ import sx.blah.discord.handle.obj.IGuild;
 
 public class ApplicationController {
 
-	private final String CONFIG_FILE = "config.properties";
-	private final Path oPath;
+	private final String CONFIG_FILE = "/config.properties";
 	private final Logger oLogger = Logger.getLogger(getClass());
 	private final Properties oConfig = new Properties();
 	private final IDiscordClient oDiscordApi;
@@ -34,7 +28,7 @@ public class ApplicationController {
 	private final Map<Class<? extends AbstractBotModule>, AbstractBotModule> mapModules = new HashMap<>();
 
 	public ApplicationController() throws URISyntaxException {
-		oPath = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+		// load config
 		loadConfig();
 
 		String sToken = (String) oConfig.get("auth.token");
@@ -68,22 +62,10 @@ public class ApplicationController {
 	}
 
 	private void loadConfig() {
-		Path oFilePath = oPath.resolve(CONFIG_FILE);
-		File oFile = oFilePath.toFile();
-		if (oFile.exists()) {
-			try {
-				FileInputStream oStream = new FileInputStream(oFile);
-				oConfig.load(oStream);
-			} catch (IOException e) {
-				oLogger.error(e.getMessage(), e);
-			}
-		} else {
-			oConfig.setProperty("auth.token", StringUtils.EMPTY);
-			try {
-				oConfig.store(new FileOutputStream(oFile), StringUtils.EMPTY);
-			} catch (IOException e) {
-				oLogger.error(e.getMessage(), e);
-			}
+		try {
+			oConfig.load(getClass().getResourceAsStream(CONFIG_FILE));
+		} catch (IOException e) {
+			oLogger.error(e.getMessage(), e);
 		}
 	}
 
