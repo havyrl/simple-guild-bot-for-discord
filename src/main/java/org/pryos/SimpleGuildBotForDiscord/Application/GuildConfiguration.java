@@ -1,10 +1,14 @@
 package org.pryos.SimpleGuildBotForDiscord.Application;
 
+import org.apache.log4j.Logger;
+
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 public class GuildConfiguration {
+
+	private final Logger oLogger = Logger.getLogger(getClass());
 
 	private IGuild guild;
 	private IChannel defaultTextChannel;
@@ -43,4 +47,14 @@ public class GuildConfiguration {
 		this.defaultVoiceChannel = defaultVoiceChannel;
 		return this;
 	}
+
+	public void sendMessage(String sMessage) {
+		if (getDefaultTextChannel() != null) {
+			getDefaultTextChannel().sendMessage(sMessage);
+		} else {
+			oLogger.warn(
+					"missing default text channel for server: " + getGuild().getName() + "|" + getGuild().getLongID());
+		}
+	}
+
 }

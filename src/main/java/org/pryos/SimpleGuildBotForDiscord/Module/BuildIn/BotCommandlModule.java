@@ -33,6 +33,11 @@ public class BotCommandlModule extends AbstractBotModule {
 		// most situations. It's partially good practise and partially developer
 		// preference
 
+		// ignore bots
+		if (oEvent.getAuthor().isBot()) {
+			return;
+		}
+
 		// Given a message "/test arg1 arg2", argArray will contain ["/test", "arg1",
 		// "arg"]
 		String[] argArray = oEvent.getMessage().getContent().split(" ");

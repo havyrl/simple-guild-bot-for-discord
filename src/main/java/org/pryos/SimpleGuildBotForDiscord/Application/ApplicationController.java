@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +69,11 @@ public class ApplicationController {
 
 	private <L extends ICommandHandler> List<L> getHandlers(String sCommand, boolean bAdd) {
 		@SuppressWarnings("unchecked")
-		List<L> lstHandlers = (List<L>) mapHandler.get(sCommand);
+		List<L> lstHandlers = (List<L>) mapHandler.get(sCommand.toLowerCase());
 		if (lstHandlers == null) {
 			lstHandlers = new ArrayList<>();
 			if (bAdd) {
-				mapHandler.put(sCommand, lstHandlers);
+				mapHandler.put(sCommand.toLowerCase(), lstHandlers);
 			}
 		}
 		return lstHandlers;
@@ -130,12 +131,18 @@ public class ApplicationController {
 		return oServer;
 	}
 
+	public Collection<GuildConfiguration> getGuilds() {
+		return mapGuildConfig.values();
+	}
+
 	public void sendMessage(IGuild oGuild, String sMessage) {
 		GuildConfiguration oServer = getGuildSettings(oGuild);
-		if (oServer.getDefaultTextChannel() != null) {
-			oServer.getDefaultTextChannel().sendMessage(sMessage);
-		} else {
-			oLogger.warn("missing default text channel for server: " + oGuild.getName() + "|" + oGuild.getLongID());
+		oServer.sendMessage(sMessage);
+	}
+
+	public void sendMessage2All(String sMessage) {
+		for (GuildConfiguration oGuildConfig : getGuilds()) {
+			oGuildConfig.sendMessage(sMessage);
 		}
 	}
 
