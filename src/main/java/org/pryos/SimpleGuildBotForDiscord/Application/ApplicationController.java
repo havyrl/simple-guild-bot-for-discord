@@ -13,8 +13,8 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
-import org.pryos.SimpleGuildBotForDiscord.Module.BotCommandlModule;
-import org.pryos.SimpleGuildBotForDiscord.Module.IndexServerModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.BotCommandlModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.IndexServerModule;
 
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;

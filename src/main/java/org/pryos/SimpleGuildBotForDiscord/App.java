@@ -4,8 +4,8 @@ import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
-import org.pryos.SimpleGuildBotForDiscord.Module.BotRenameModule;
-import org.pryos.SimpleGuildBotForDiscord.Module.DiscordEventLogModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.BotRenameModule;
+import org.pryos.SimpleGuildBotForDiscord.Module.BuildIn.DiscordEventLogModule;
 import org.pryos.SimpleGuildBotForDiscord.Module.VoiceStatusAnounce.VoiceStatusAnounceModule;
 
 /**

@@ -1,4 +1,4 @@
-package org.pryos.SimpleGuildBotForDiscord.Module;
+package org.pryos.SimpleGuildBotForDiscord.Module.BuildIn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.pryos.SimpleGuildBotForDiscord.Application.ApplicationController;
+import org.pryos.SimpleGuildBotForDiscord.Module.AbstractBotModule;
 
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
