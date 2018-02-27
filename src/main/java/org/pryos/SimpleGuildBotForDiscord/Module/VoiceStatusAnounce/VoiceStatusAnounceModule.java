@@ -30,6 +30,9 @@ public class VoiceStatusAnounceModule extends AbstractBotModule {
 	@EventSubscriber
 	public void handle(UserVoiceChannelJoinEvent oEvent) {
 		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
+		if (StringUtil.isBlank(sNick)) {
+			sNick = oEvent.getUser().getName();
+		}
 		EnumSet<Permissions> setPermissions = oEvent.getVoiceChannel().getModifiedPermissions(oDiscordApi.getOurUser());
 		if (setPermissions.contains(Permissions.VOICE_CONNECT)) {
 			oApp.sendMessage(oEvent.getGuild(), String.format(JOIN_MESSAGE, sNick, oEvent.getVoiceChannel().getName()));
@@ -39,6 +42,9 @@ public class VoiceStatusAnounceModule extends AbstractBotModule {
 	@EventSubscriber
 	public void handle(UserVoiceChannelMoveEvent oEvent) {
 		String sNick = oEvent.getUser().getNicknameForGuild(oEvent.getGuild());
+		if (StringUtil.isBlank(sNick)) {
+			sNick = oEvent.getUser().getName();
+		}
 		EnumSet<Permissions> setOldPermissions = oEvent.getOldChannel()
 				.getModifiedPermissions(oDiscordApi.getOurUser());
 		EnumSet<Permissions> setNewPermissions = oEvent.getNewChannel()

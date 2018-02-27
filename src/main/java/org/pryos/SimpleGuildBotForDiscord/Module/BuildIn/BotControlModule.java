@@ -44,7 +44,6 @@ public class BotControlModule extends AbstractBotModule implements ICommandHandl
 
 	private void restartBot() {
 		oApp.sendMessage2All(String.format(MESSAGE_RESTART));
-		oDiscordApi.logout();
 		Thread.currentThread().interrupt();
 		return;
 	}
